@@ -30,6 +30,20 @@ sub run {
 
     # ...
     # Вычисление минимума и максимума
+    if ($x > $y && $x > $z) 
+        {$max = $x;}
+    elsif ($y > $x && $y > $z)
+        {$max = $y;}
+    else
+	{$max = $z;}
+
+    if ($x < $y && $x < $z) 
+        {$min = $x;}
+    elsif ($y < $x && $y < $z)
+        {$min = $y;}
+    else
+	{$min = $z;}
+
     # ...
 
     print "$min, $max\n";

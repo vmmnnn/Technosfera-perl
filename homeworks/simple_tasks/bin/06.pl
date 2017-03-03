@@ -11,7 +11,7 @@ use warnings;
 =head1 encode ($str, $key)
 
 Функция шифрования ASCII строки $str ключем $key.
-Пачатает зашифрованную строку $encoded_str в формате "$encoded_str\n"
+Печатает зашифрованную строку $encoded_str в формате "$encoded_str\n"
 
 Пример:
 
@@ -22,9 +22,15 @@ encode('#abc', 1) - печатает '$bcd'
 sub encode {
     my ($str, $key) = @_;
     my $encoded_str = '';
-
+    my $l = length($str);
+    
     # ...
     # Алгоритм шифрования
+    for my $i (0..$l-1) {
+        $encoded_str = 
+   	      $encoded_str . chr( (ord (substr($str, $i, 1)) + $key) % 127);
+    }
+	
     # ...
 
     print "$encoded_str\n";
@@ -33,7 +39,7 @@ sub encode {
 =head1 decode ($encoded_str, $key)
 
 Функция дешифрования ASCII строки $encoded_str ключем $key.
-Пачатает дешифрованную строку $str в формате "$str\n"
+Печатает дешифрованную строку $str в формате "$str\n"
 
 Пример:
 
@@ -44,9 +50,13 @@ decode('$bcd', 1) - печатает '#abc'
 sub decode {
     my ($encoded_str, $key) = @_;
     my $str = '';
+    my $l = length($encoded_str);
 
     # ...
     # Алгоритм дешифрования
+    for my $i (0..$l-1) {
+        $str = $str . chr( (ord (substr($encoded_str, $i, 1)) - $key) % 127);
+    }
     # ...
 
     print "$str\n";

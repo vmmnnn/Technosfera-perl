@@ -11,7 +11,7 @@ use warnings;
 =head1 run ($str, $substr)
 
 Функция поиска количества вхождений строки $substr в строку $str.
-Пачатает количество вхождений в виде "$count\n"
+Печатает количество вхождений в виде "$count\n"
 Если вхождений нет - печатает "0\n".
 
 Примеры: 
@@ -29,9 +29,17 @@ run("ab", "c") - печатает "0\n"
 sub run {
     my ($str, $substr) = @_;
     my $num = 0;
-
+    my $l_str = length($str);
+    my $l_substr = length($substr);
+    my $pos = index($str, $substr);
     # ...
-    # Вычисление количества вохождений строки $substr в строку $str,
+    # Вычисление количества вхождений строки $substr в строку $str,
+    while ($pos != -1) {
+       $num = $num + 1;
+       $str = substr($str, $pos + 1, $l_str - $l_substr);
+       $l_str = length($str);
+       $pos = index($str, $substr);
+    }
     # ...
 
     print "$num\n";
