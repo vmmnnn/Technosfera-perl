@@ -40,13 +40,71 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 =cut
 
 sub anagram {
+    use utf8;
+    use Encode qw(encode decode);
     my $words_list = shift;
     my %result;
-
+    my @mass = @{$words_list};
+    my $i = 0;
+    my $j;
     #
-    # Поиск анограмм
-    #
-
+    # Поиск анаграмм
+    for my $word (@mass) {
+        $word = decode("utf-8", $word);
+        $mass[$i] = lc($word);
+	$i++;
+    }
+    for my $word (@mass) {
+        my $found_fl = 0;   
+	        # 0 - make new key, 1 - push as a value, 2 - don't do anything
+	my $l_word = length($word);
+	for my $key (keys %result) {
+	    my $amm_eq = 0;
+	    my $l_key = length(decode("utf-8", $key));
+	    if ($l_word == $l_key) {
+		if ($word eq $key) {
+		    $found_fl = 2;
+		    last;
+		}
+		for $i (0..$l_word-1) {
+	            my $letter = substr($word, $i, 1);
+		    for $j (0..$l_key-1) {
+		        if ($letter eq substr(decode("utf-8", $key), $j, 1)){
+			    $amm_eq++;
+		        }
+		    }
+		}
+	    }
+	    if ($amm_eq == $l_word) {    # found list in hash
+	        my $ref = $result{$key};
+		my @res_mass = @{$ref};
+	        my $fl = 0;
+		#for my $k (0..@res_mass) { # ???
+                my $k;
+		for ($k = 0; $k < @res_mass; $k++) { # Is there the same value?
+		    if (decode("utf-8", $res_mass[$k]) eq $word) {
+		        $fl = 1;
+		        last;
+		    }
+		}
+		if ($fl == 0) {
+		    push(@{$ref}, encode("utf-8", $word));
+	        }
+		$found_fl = 1;
+	        last;
+	    } 
+	}
+	if ($found_fl == 0) {             # new key
+	    $result{encode("utf-8", $word)} = [encode("utf-8", $word)];
+	}
+    }
+    for my $key (keys %result) {   # delete keys with one value
+	my $ref = $result{$key};
+	my @res_mass = @{$ref};
+	if (@res_mass == 1) {
+	    delete $result{$key};
+	}
+    }
     return \%result;
 }
 
