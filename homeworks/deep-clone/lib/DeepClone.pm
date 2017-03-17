@@ -4,8 +4,6 @@ use 5.010;
 use strict;
 use warnings;
 
-my %seen;
-
 =encoding UTF8
 
 =head1 SYNOPSIS
@@ -38,9 +36,15 @@ my %seen;
 
 sub clone {
    my $orig = shift;
+   my $seen_ref;
+   my %seen;
    my $cloned;
    my $ref_type = ref $orig;
    my $error_fl = 0;
+   
+   $seen_ref = shift;
+   if (defined $seen_ref) 
+      {%seen = %{$seen_ref};}
    # ...
    if ($ref_type) {
       if (exists $seen{$orig}) {
@@ -58,7 +62,7 @@ sub clone {
                   if ($elem == $orig) {
                      $mass[$i] = \@mass;
                   } else {
-                     $answ = clone($elem);
+                     $answ = clone($elem, \%seen);
                      if (defined $answ) {
                         $mass[$i] = $answ;
                      } else {
@@ -66,7 +70,7 @@ sub clone {
                      }
                   }
                } elsif ($ref_elem_type eq 'HASH') { 
-                  $answ = clone($elem);
+                  $answ = clone($elem, \%seen);
                   if (defined $answ) {
                      $mass[$i] = $answ;
                   } else {
@@ -96,7 +100,7 @@ sub clone {
                   if ($val == $orig) {
                      $hash{$key} = $val;
                   } else {
-                     $answ = clone($val);
+                     $answ = clone($val, \%seen);
                      if (defined $answ) {
                         $hash{$key} = $answ;
                      } else {
@@ -104,7 +108,7 @@ sub clone {
                      }
                   }
                } elsif ($ref_val_type eq 'ARRAY') {
-                  $answ = clone($val);
+                  $answ = clone($val, \%seen);
                   if (defined $answ) {
                      $hash{$key} = $answ;
                   } else {
